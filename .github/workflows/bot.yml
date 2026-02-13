@@ -1,0 +1,37 @@
+name: Word of the day
+
+on:
+  schedule:
+    # 8:00 AM IST → 02:30 UTC
+    - cron: "30 2 * * *"
+
+    # 1:00 PM IST → 07:30 UTC
+    - cron: "30 7 * * *"
+
+    # 7:00 PM IST → 13:30 UTC
+    - cron: "30 13 * * *"
+
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python main.py
